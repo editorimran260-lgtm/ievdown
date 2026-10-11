@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>IEVDOWN — App Downloads</title>
+
+<meta name="description" content="Discover apps on IEVDOWN. Explore app details and download your favourite apps.">
+<meta name="theme-color" content="#f4f8ff">
+
+<style>
+:root {
+    --bg: #f3f7ff;
+    --white: #ffffff;
+    --blue: #4285f4;
+    --blue-dark: #2468df;
+    --text: #17243b;
+    --muted: #718096;
+    --border: rgba(117, 151, 205, 0.19);
+    --glass: rgba(255, 255, 255, 0.84);
+    --shadow: 0 12px 35px rgba(53, 87, 145, 0.09);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(ellipse at 10% 0%, #e2eeff 0%, transparent 38%),
+        radial-gradient(ellipse at 95% 20%, #eee7ff 0%, transparent 32%),
+        var(--bg);
+    min-height: 100vh;
+}
+
+button, input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 13px 15px;
+    background: rgba(255, 255, 255, 0.86);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.topbar-inner {
+    max-width: 720px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.logo {
+    width: 43px;
+    height: 43px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    color: white;
+    font-weight: 900;
+    font-size: 17px;
+    background: linear-gradient(135deg, #64b5ff, #7968f8);
+    box-shadow: 0 6px 18px rgba(89, 117, 239, 0.25);
+}
+
+.brand {
+    min-width: 0;
+}
+
+.brand h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -0.7px;
+}
+
+.brand p {
+    margin: 3px 0 0;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.header-search {
+    max-width: 720px;
+    margin: 14px auto 0;
+    position: relative;
+}
+
+.header-search input {
+    width: 100%;
+    height: 46px;
+    padding: 0 16px 0 43px;
+    outline: none;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: #f6f9ff;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.header-search input:focus {
+    border-color: #90b8ff;
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.09);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 13px;
+    font-size: 17px;
+    pointer-events: none;
+}
+
+.container {
+    width: 100%;
+    max-width: 720px;
+    padding: 18px 12px 40px;
+    margin: auto;
+}
+
+.feed-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 4px 3px 17px;
+}
+
+.feed-heading h2 {
+    font-size: 19px;
+    margin: 0;
+    letter-spacing: -0.4px;
+}
+
+.feed-heading span {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.post {
+    overflow: hidden;
+    margin-bottom: 21px;
+    background: var(--glass);
+    border: 1px solid rgba(255,255,255,0.95);
+    border-radius: 21px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    animation: postIn 0.4s ease both;
+}
+
+@keyframes postIn {
+    from {
+        opacity: 0;
+        transform: translateY(9px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.post-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 15px 13px;
+}
+
+.app-cover {
+    width: 53px;
+    height: 53px;
+    border-radius: 15px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #edf2fa;
+    border: 1px solid var(--border);
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.app-heading {
+    min-width: 0;
+    flex: 1;
+}
+
+.app-heading h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.post-date {
+    margin-top: 5px;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.post-label {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 800;
+    color: #2864c8;
+    background: #e8f1ff;
+    padding: 7px 9px;
+    border-radius: 10px;
+}
+
+.post-image-wrap {
+    width: 100%;
+    background: #edf2fa;
+    line-height: 0;
+}
+
+.post-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 100px;
+    max-height: none;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.download-area {
+    padding: 14px 14px 15px;
+}
+
+.download-btn {
+    position: relative;
+    width: 100%;
+    min-height: 55px;
+    border: 0;
+    border-radius: 16px;
+    color: white;
+    background: linear-gradient(110deg, #3988ff, #665ff2);
+    box-shadow: 0 8px 20px rgba(67, 113, 242, 0.24);
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.download-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 12px rgba(67, 113, 242, 0.18);
+}
+
+.download-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.download-icon {
+    font-size: 21px;
+}
+
+.post-link-area {
+    padding: 0 14px 14px;
+    text-align: center;
+}
+
+.share-link {
+    border: 0;
+    background: transparent;
+    color: #4778c8;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px;
+}
+
+.status {
+    padding: 34px 18px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.72);
+    color: var(--muted);
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.status strong {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--text);
+    font-size: 17px;
+}
+
+.spinner {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    border: 3px solid #dce8fc;
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-bottom: 12px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.footer {
+    text-align: center;
+    padding: 12px 10px 25px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (min-width: 600px) {
+    .container {
+        padding-top: 25px;
+    }
+
+    .post {
+        border-radius: 23px;
+        margin-bottom: 25px;
+    }
+
+    .post-head {
+        padding: 17px;
+    }
+
+    .download-area {
+        padding: 16px 17px 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="topbar-inner">
+        <div class="logo">IEV</div>
+        <div class="brand">
+            <h1>IEVDOWN</h1>
+            <p>Discover apps. Download simply.</p>
+        </div>
+    </div>
+
+    <div class="header-search">
+        <span class="search-icon">⌕</span>
+        <input
+            id="searchInput"
+            type="search"
+            placeholder="Search apps..."
+            autocomplete="off"
+            aria-label="Search apps"
+        >
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="feed-heading">
+        <h2 id="feedTitle">Latest Apps</h2>
+        <span id="appCount"></span>
+    </div>
+
+    <section id="feed" aria-live="polite">
+        <div class="status">
+            <span class="spinner"></span>
+            <strong>Loading apps...</strong>
+            Please wait.
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    IEVDOWN · Simple App Discovery
+</footer>
+
+<script type="module">
+import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    query,
+    where
+} from
+    "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+
+/*
+  IEVDOWN Firebase Configuration
+  These values are from your Firebase Web App.
+*/
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCfuyT3BM_fea2Q1dIDwyya0UnD70LVcRA",
+    authDomain: "ievdown.firebaseapp.com",
+    projectId: "ievdown",
+    storageBucket: "ievdown.firebasestorage.app",
+    messagingSenderId: "325833752090",
+    appId: "1:325833752090:web:7b68ad5f09cda93ec79ba3",
+    measurementId: "G-XN6F0MQ70Z"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+
+const feed = document.getElementById("feed");
+const searchInput = document.getElementById("searchInput");
+const appCount = document.getElementById("appCount");
+const feedTitle = document.getElementById("feedTitle");
+
+let apps = [];
+let activeAppId = new URLSearchParams(location.search).get("app");
+
+/*
+  Expected Firestore collection: apps
+
+  Each document should contain:
+  name: "App Name"
+  coverUrl: "https://..."
+  detailImageUrl: "https://..."
+  adsterraUrl: "https://..."
+  telegramBotUrl: "https://t.me/..."
+  published: true
+  createdAt: Firestore Timestamp (optional)
+*/
+
+function safeText(value) {
+    return String(value ?? "");
+}
+
+function validWebUrl(value) {
+    try {
+        const url = new URL(String(value));
+        return url.protocol === "https:" || url.protocol === "http:";
+    } catch {
+        return false;
+    }
+}
+
+function safeImageUrl(value) {
+    return validWebUrl(value) ? String(value) : "";
+}
+
+function showStatus(title, message) {
+    feed.replaceChildren();
+
+    const box = document.createElement("div");
+    box.className = "status";
+
+    const strong = document.createElement("strong");
+    strong.textContent = title;
+
+    const text = document.createElement("div");
+    text.textContent = message;
+
+    box.append(strong, text);
+    feed.append(box);
+}
+
+function createImage(url, className, altText) {
+    const img = document.createElement("img");
+
+    img.className = className;
+    img.alt = altText;
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.draggable = false;
+    img.referrerPolicy = "no-referrer";
+
+    if (url) {
+        img.src = url;
+    } else {
+        img.alt = altText + " — image unavailable";
+    }
+
+    img.addEventListener("error", () => {
+        img.removeAttribute("src");
+        img.alt = altText + " image unavailable";
+    }, { once: true });
+
+    return img;
+}
+
+function getPostUrl(appId) {
+    const url = new URL(location.href);
+    url.search = "";
+    url.hash = "";
+    url.searchParams.set("app", appId);
+    return url.href;
+}
+
+async function sharePost(appItem) {
+    const postUrl = getPostUrl(appItem.id);
+
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: safeText(appItem.name),
+                text: "View this app on IEVDOWN",
+                url: postUrl
+            });
+            return;
+        } catch (error) {
+            if (error.name === "AbortError") return;
+        }
+    }
+
+    try {
+        await navigator.clipboard.writeText(postUrl);
+        alert("Post link copied!");
+    } catch {
+        prompt("Copy this post link:", postUrl);
+    }
+}
+
+/*
+  First click: open the app's Adsterra link.
+  Second click: open the app's Telegram Bot link.
+
+  The click stage is saved separately for each app
+  in this browser. It is not shared across devices.
+*/
+
+function downloadStageKey(appId) {
+    return "ievdown_download_stage_" + appId;
+}
+
+function getDownloadStage(appId) {
+    try {
+        return localStorage.getItem(downloadStageKey(appId)) === "ad_opened"
+            ? "ad_opened"
+            : "first";
+    } catch {
+        return "first";
+    }
+}
+
+function setDownloadStage(appId, stage) {
+    try {
+        localStorage.setItem(downloadStageKey(appId), stage);
+    } catch {
+        // Continue even if browser storage is unavailable.
+    }
+}
+
+function openExternal(url) {
+    if (!validWebUrl(url)) {
+        alert("This link is missing or invalid. Please try again later.");
+        return false;
+    }
+
+    const opened = window.open(url, "_blank", "noopener,noreferrer");
+
+    if (!opened) {
+        /*
+          Popup blockers may prevent a new tab.
+          Use the current tab as a fallback.
+        */
+        location.href = url;
+    }
+
+    return true;
+}
+
+function makePost(appItem) {
+    const post = document.createElement("article");
+    post.className = "post";
+    post.id = "post-" + appItem.id;
+
+    const head = document.createElement("div");
+    head.className = "post-head";
+
+    const cover = createImage(
+        safeImageUrl(appItem.coverUrl),
+        "app-cover",
+        safeText(appItem.name)
+    );
+
+    const heading = document.createElement("div");
+    heading.className = "app-heading";
+
+    const title = document.createElement("h3");
+    title.textContent = safeText(appItem.name) || "Untitled App";
+
+    const date = document.createElement("div");
+    date.className = "post-date";
+    date.textContent = "IEVDOWN · App post";
+
+    heading.append(title, date);
+
+    const label = document.createElement("span");
+    label.className = "post-label";
+    label.textContent = "APP";
+
+    head.append(cover, heading, label);
+
+    /*
+      This image is deliberately not clickable.
+      No link or click action is attached to it.
+    */
+    const imageWrap = document.createElement("div");
+    imageWrap.className = "post-image-wrap";
+
+    const detailImage = createImage(
+        safeImageUrl(appItem.detailImageUrl),
+        "post-image",
+        safeText(appItem.name) + " details"
+    );
+
+    imageWrap.append(detailImage);
+
+    const downloadArea = document.createElement("div");
+    downloadArea.className = "download-area";
+
+    const downloadButton = document.createElement("button");
+    downloadButton.type = "button";
+    downloadButton.className = "download-btn";
+
+    const icon = document.createElement("span");
+    icon.className = "download-icon";
+    icon.textContent = "↓";
+
+    const buttonText = document.createElement("span");
+    buttonText.textContent = "DOWNLOAD";
+
+    downloadButton.append(icon, buttonText);
+
+    downloadButton.addEventListener("click", () => {
+        const adUrl = safeText(appItem.adsterraUrl).trim();
+        const botUrl = safeText(appItem.telegramBotUrl).trim();
+
+        const stage = getDownloadStage(appItem.id);
+
+        if (stage === "first") {
+            if (!validWebUrl(adUrl)) {
+                alert("The advertising link is not configured correctly.");
+                return;
+            }
+
+            const opened = openExternal(adUrl);
+
+            if (opened) {
+                setDownloadStage(appItem.id, "ad_opened");
+            }
+
+            return;
+        }
+
+        if (!validWebUrl(botUrl)) {
+            alert("The Telegram Bot link is not configured correctly.");
+            return;
+        }
+
+        openExternal(botUrl);
+
+        /*
+          After the second click, reset so the next download
+          attempt starts with the advertising link again.
+        */
+        setDownloadStage(appItem.id, "first");
+    });
+
+    downloadArea.append(downloadButton);
+
+    const linkArea = document.createElement("div");
+    linkArea.className = "post-link-area";
+
+    const shareButton = document.createElement("button");
+    shareButton.type = "button";
+    shareButton.className = "share-link";
+    shareButton.textContent = "↗ Share app post";
+
+    shareButton.addEventListener("click", () => {
+        sharePost(appItem);
+    });
+
+    linkArea.append(shareButton);
+
+    post.append(head, imageWrap, downloadArea, linkArea);
+
+    return post;
+}
+
+function renderPosts(items) {
+    feed.replaceChildren();
+
+    if (items.length === 0) {
+        showStatus(
+            "No apps found",
+            "No published apps match your search."
+        );
+        appCount.textContent = "0 apps";
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    for (const appItem of items) {
+        fragment.append(makePost(appItem));
+    }
+
+    feed.append(fragment);
+    appCount.textContent = items.length + (items.length === 1 ? " app" : " apps");
+}
+
+function applySearch() {
+    const term = searchInput.value.trim().toLowerCase();
+
+    let visibleApps = apps;
+
+    if (activeAppId) {
+        visibleApps = apps.filter(item => item.id === activeAppId);
+        feedTitle.textContent = "App Details";
+        searchInput.classList.add("hidden");
+    } else {
+        feedTitle.textContent = "Latest Apps";
+
+        visibleApps = apps.filter(item =>
+            safeText(item.name).toLowerCase().includes(term)
+        );
+    }
+
+    renderPosts(visibleApps);
+}
+
+async function loadApps() {
+    showStatus("Loading apps...", "Connecting to IEVDOWN.");
+
+    try {
+        const appsQuery = query(
+            collection(db, "apps"),
+            where("published", "==", true)
+        );
+
+        const snapshot = await getDocs(appsQuery);
+
+        apps = snapshot.docs.map(document => ({
+            id: document.id,
+            ...document.data()
+        }));
+
+        /*
+          Newest first when createdAt exists.
+        */
+        apps.sort((a, b) => {
+            const aTime = a.createdAt?.toMillis?.() || 0;
+            const bTime = b.createdAt?.toMillis?.() || 0;
+            return bTime - aTime;
+        });
+
+        if (activeAppId && !apps.some(item => item.id === activeAppId)) {
+            showStatus(
+                "App not found",
+                "This app may have been unpublished, deleted, or the link may be incorrect."
+            );
+
+            appCount.textContent = "";
+            return;
+        }
+
+        applySearch();
+
+    } catch (error) {
+        console.error("IEVDOWN Firebase error:", error);
+
+        showStatus(
+            "Could not load apps",
+            "Please try again later. The database may not be configured yet."
+        );
+    }
+}
+
+searchInput.addEventListener("input", applySearch);
+
+loadApps();
+</script>
+
+</body>
+</html>
